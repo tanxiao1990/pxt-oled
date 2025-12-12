@@ -5,7 +5,7 @@
  * https://github.com/Pythom1234/pxt-oled
  */
 
-//% icon="\uf26c" color=#0000ff block="OLED"
+//% icon="\uf26c" color=#0000ff block="OLED显示屏"
 namespace oled {
     const ADDR = 0x3C
     let screen = pins.createBuffer(1025)
@@ -55,7 +55,7 @@ namespace oled {
     /**
      * Initialize OLED display, this command must be called at the start of the program.
      */
-    //% block="init OLED display"
+    //% block="初始化OLED显示屏"
     //% weight=101
     export function init(): void {
         screen = pins.createBuffer(1025)
@@ -90,7 +90,7 @@ namespace oled {
     //% contrast.min=0
     //% contrast.max=255
     //% weight=100
-    export function setContrast(contrast: number): void {
+    function setContrast(contrast: number): void {
         cmd2(0x81, contrast)
     }
     /**
@@ -98,7 +98,7 @@ namespace oled {
      * You need to call `draw` to see the changes.
      * @param color filling color (usually `false`)
      */
-    //% block="clear $color"
+    //% block="清除 $color"
     //% color.defl=false
     //% weight=99
     export function clear(color: boolean): void {
@@ -108,7 +108,7 @@ namespace oled {
      * Sends buffer to OLED display.
      * This command must be called whenever you want to show something on the OLED display.
      */
-    //% block="draw"
+    //% block="刷新显示"
     //% weight=98
     export function draw(): void {
         pins.i2cWriteNumber(ADDR, 0xB0, NumberFormat.UInt16BE)
@@ -127,7 +127,7 @@ namespace oled {
     //% block="set pixel at x $x y $y to $color"
     //% color.defl=true
     //% weight=97
-    export function setPx(x: number, y: number, color: boolean): void {
+    function setPx(x: number, y: number, color: boolean): void {
         const index = Math.round(Math.floor(y / 8) * 128 + x + 1)
         if ((index < 1025) && (index > -1) && (x < 128) && (x > -1) && (y > -1) && (y < 128)) {
             screen[index] = (color) ? showbit(screen[index], (y % 8)) : hidebit(screen[index], (y % 8))
@@ -141,7 +141,7 @@ namespace oled {
      */
     //% block="toggle pixel at x $x y $y"
     //% weight=96
-    export function togglePx(x: number, y: number): void {
+    function togglePx(x: number, y: number): void {
         const index = Math.round(Math.floor(y / 8) * 128 + x + 1)
         if ((index < 1025) && (index > -1) && (x < 128) && (x > -1) && (y > -1) && (y < 128)) {
             screen[index] = (!px(x, y)) ? showbit(screen[index], (y % 8)) : hidebit(screen[index], (y % 8))
@@ -154,7 +154,7 @@ namespace oled {
      */
     //% block="pixel at x $x y $y"
     //% weight=95
-    export function px(x: number, y: number): boolean {
+    function px(x: number, y: number): boolean {
         const index = Math.round(Math.floor(y / 8) * 128 + x + 1)
         if ((index < 1025) && (index > -1) && (x < 128) && (x > -1) && (y > -1) && (y < 128)) {
             return getbit(screen[index], (y % 8)) == 1
@@ -172,7 +172,7 @@ namespace oled {
      * @param color color of text
      * @param toggle sets whether to use pixel switching instead of setting the pixel to a specific color (if `true`, `color` means nothing)
      */
-    //% block="draw text $text at|x $x|y $y|color $color|toggle $toggle"
+    //% block="显示文本 $text 在坐标|x $x|y $y|白还是黑 $color|颜色反转吗 $toggle"
     //% color.defl=true
     //% toggle.defl=false
     //% weight=94
@@ -325,7 +325,7 @@ namespace oled {
     //% fill.defl=false
     //% toggle.defl=false
     //% weight=93
-    export function drawRect(x1: number, y1: number, x2: number, y2: number, color: boolean, fill: boolean, toggle: boolean): void {
+    function drawRect(x1: number, y1: number, x2: number, y2: number, color: boolean, fill: boolean, toggle: boolean): void {
         if (fill) {
             for (let x = x1; x <= x2; x++) {
                 for (let y = y1; y <= y2; y++) {
@@ -382,7 +382,7 @@ namespace oled {
     //% color.defl=true
     //% toggle.defl=false
     //% weight=92
-    export function drawLine(x1: number, y1: number, x2: number, y2: number, color: boolean, toggle: boolean): void {
+    function drawLine(x1: number, y1: number, x2: number, y2: number, color: boolean, toggle: boolean): void {
         const line = []
         const dx = Math.abs(x2 - x1)
         const dy = Math.abs(y2 - y1)
@@ -422,7 +422,7 @@ namespace oled {
      * @param bg sets whether empty pixels of the image are drawn (drawn with `not color`)
      * @param toggle sets whether to use pixel switching instead of setting the pixel to a specific color (if `true`, `color` means nothing)
      */
-    //% block="draw image|$image|x $x|y $y|color $color|background $bg|toggle $toggle"
+    //% block="显示点阵图 |$image|在坐标 x $x|y $y|颜色黑白吗 $color|背景 $bg|反转吗 $toggle"
     //% color.defl=true
     //% bg.defl=false
     //% toggle.defl=false
@@ -458,7 +458,7 @@ namespace oled {
     //% block="add character $char $image"
     //% advanced=true
     //% weight=99
-    export function addChar(image: Image, char: string): void {
+    function addChar(image: Image, char: string): void {
         if (char != "" && image != null && image != undefined) {
             char = char[0]
             let compressedChar: number[] = []
@@ -483,7 +483,7 @@ namespace oled {
     //% weight=98
     //% shim=images::createImage
     //% imageLiteral=1 imageLiteralRows=11 imageLiteralColumns=8
-    export function charImage(leds: string): Image {
+    function charImage(leds: string): Image {
         return <Image><any>leds
     }
 }
